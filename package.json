@@ -1,0 +1,30 @@
+{
+  "name": "chattr",
+  "version": "0.0.0",
+  "description": "Encrypted chat",
+  "main": "index.html",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha -R spec --compilers coffee:coffee-script/register"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidbanham/chattr"
+  },
+  "author": "david@banham.id.au",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/davidbanham/chattr/issues"
+  },
+  "homepage": "https://github.com/davidbanham/chattr",
+  "dependencies": {
+    "pouchdb": "^3.0.6"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.8.0",
+    "mocha": "^1.21.4",
+    "rimraf": "^2.2.8"
+  }
+}
