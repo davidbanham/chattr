@@ -21,6 +21,7 @@ describe 'conversation', ->
   it 'should hold a name', ->
     assert con.name
   it 'should expose a pouch', ->
+    # This doesn't form part of the public API. Just convenient for testing.
     assert con.pouch
     assert con.pouch.put
   it 'should be an EventEmitter', ->
