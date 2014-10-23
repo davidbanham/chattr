@@ -17,6 +17,9 @@ Conversation = (name, syncTarget, pouch) ->
     @emit 'ready'
   @pouch.sync syncTarget,
     live: true
+  .on 'error', (err) =>
+    @emit 'error', err
+  .catch -> #Discard bluebird errors, we get it in the line above
   @write = (msg, cb) =>
     @pouch.post {time: new Date().toISOString(), message: msg}, cb
   @read = (limit, cb) =>

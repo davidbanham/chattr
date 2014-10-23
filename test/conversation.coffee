@@ -9,6 +9,8 @@ con = null
 describe 'conversation', ->
   beforeEach ->
     con = new Conversation rando(), 'http://example.com'
+    con.on 'error', (err) ->
+      throw err unless err.status is 502
   afterEach (done) ->
     con.removeAllListeners()
     con.pouch.destroy done
@@ -20,7 +22,7 @@ describe 'conversation', ->
     assert con.pouch.put
   it 'should be an EventEmitter', ->
     assert con.on
-  it 'should have a design doc to query exhange documents', (done) ->
+  it 'should have a design doc to query exchange documents', (done) ->
     con.pouch.changes({live: true}).on 'change', (change) ->
       if change.id is '_design/exchanges'
         con.pouch.get '_design/exchanges', (err, doc) ->
