@@ -1,6 +1,4 @@
 assert = require 'assert'
-rimraf = require 'rimraf'
-
 Conversation = require '../src/convo.coffee'
 
 rando = ->
@@ -10,14 +8,10 @@ con = null
 
 describe 'conversation', ->
   beforeEach ->
-    con = new Conversation rando(), 'example.com'
-  after ->
-    rimraf.sync 'example.com'
+    con = new Conversation rando(), 'http://example.com'
   afterEach (done) ->
     con.removeAllListeners()
-    setTimeout ->
-      done rimraf.sync con.name
-    , 1
+    con.pouch.destroy done
   it 'should hold a name', ->
     assert con.name
   it 'should expose a pouch', ->
