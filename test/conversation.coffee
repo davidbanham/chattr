@@ -22,24 +22,13 @@ describe 'conversation', ->
     assert con.pouch.put
   it 'should be an EventEmitter', ->
     assert con.on
-  it 'should have a design doc to query exchange documents', (done) ->
-    con.pouch.changes({live: true}).on 'change', (change) ->
-      if change.id is '_design/exchanges'
-        con.pouch.get '_design/exchanges', (err, doc) ->
-          assert.deepEqual err, null
-          assert.equal doc._id, '_design/exchanges'
-          assert doc.views
-          assert doc.views.exchanges
-          assert doc.views.exchanges.map
-          done()
   describe 'write', ->
     it 'should have a write method', ->
       assert con.write
     it 'should write documents into the database', (done) ->
       con.write 'ohai!', ->
-        con.pouch.allDocs {include_docs: true}, (err, res) ->
-          for row in res.rows
-            done() if row.doc.message is 'ohai!'
+        con.pouch.allDocs (err, res) ->
+          done assert.equal res.total_rows, 1
     it 'should write properly formed documents into the database', (done) ->
       d = new Date().toISOString()
       con.write 'hello there', ->
@@ -49,15 +38,7 @@ describe 'conversation', ->
           assert.equal doc.time, d
           done()
     it 'should emit a message event when a doc is written', (done) ->
-      con.on 'message', (change) ->
-        return if change.id.match /design/
-        done()
-      con.write 'hai'
-    it 'should emit a message including the document', (done) ->
-      con.on 'message', (change) ->
-        return if change.id.match /design/
-        assert change.doc
-        assert.equal change.doc.message, 'hai'
+      con.on 'message', ->
         done()
       con.write 'hai'
   describe 'read', ->

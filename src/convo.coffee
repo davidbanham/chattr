@@ -1,20 +1,11 @@
 EventEmitter = require('events').EventEmitter
 
-exchangeQueryDoc =
-  _id: '_design/exchanges'
-  views:
-    exchanges:
-      map: ((doc) ->
-        emit doc if doc.exchange_public_key).toString()
-
 Conversation = (name, syncTarget, pouch) ->
   throw new Error 'syncTarget is required' if !syncTarget
   PouchDB = pouch or require 'pouchdb'
   @name = name
   @pouch = new PouchDB name,
     auto_compaction: true
-  @pouch.put(exchangeQueryDoc).then =>
-    @emit 'ready'
   @pouch.sync syncTarget,
     live: true
   .on 'error', (err) =>
@@ -33,8 +24,8 @@ Conversation = (name, syncTarget, pouch) ->
       return cb err if err
       return cb null, res.rows.map (row) ->
         return row.doc
-  @changes = @pouch.changes({live: true, include_docs: true}).on 'change', (doc) =>
-    @emit 'message', doc
+  @changes = @pouch.changes({live: true}).on 'change', =>
+    @emit 'message'
   return this
 
 Conversation.prototype = EventEmitter.prototype
