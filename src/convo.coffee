@@ -1,10 +1,10 @@
 EventEmitter = require('events').EventEmitter
 
-Conversation = (name, syncTarget, pouch) ->
+Conversation = (name, syncTarget) ->
   throw new Error 'syncTarget is required' if !syncTarget
-  PouchDB = pouch or require 'pouchdb'
+  pouch = if PouchDB? then PouchDB else require 'pouchdb'
   @name = name
-  @pouch = new PouchDB name,
+  @pouch = new pouch name,
     auto_compaction: true
   @pouch.sync syncTarget,
     live: true
