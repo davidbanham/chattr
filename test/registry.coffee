@@ -56,3 +56,15 @@ describe 'registry', ->
             assert.equal found[0].secret, con.secret
             assert.deepEqual found[0].invitees, con.invitees
             done()
+
+  describe 'update', ->
+    it 'should allow you to add more invitees', (done) ->
+      reg.register con, (err) ->
+        assert.deepEqual err, null
+        con.invitees.push random.secret()
+        reg.update con, (err) ->
+          assert.deepEqual err, null
+          reg.pouch.get con.name, (err, doc) ->
+            assert.deepEqual err, null
+            assert.deepEqual doc.invitees, con.invitees
+            done()

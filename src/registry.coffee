@@ -25,6 +25,12 @@ Registry = (pouch) ->
       return cb err if err
       cb null, res.rows.map (row) ->
         return row.doc
+  @update = (con, cb) =>
+    @pouch.get con.name, (err, doc) =>
+      return cb err if err
+      con._rev = doc._rev
+      con._id = doc._id
+      @pouch.put con, cb
 
   return this
 
