@@ -1,14 +1,12 @@
 assert = require 'assert'
 Conversation = require '../src/convo.coffee'
-
-rando = ->
-  return Math.floor(Math.random() * (1 << 24)).toString(16)
+random = require '../src/rand.coffee'
 
 con = null
 
 describe 'conversation', ->
   beforeEach ->
-    con = new Conversation rando(), 'http://example.com'
+    con = new Conversation random.secret(), 'http://example.com'
     con.on 'error', (err) ->
       throw err unless err.status is 502
   afterEach (done) ->
@@ -65,7 +63,7 @@ describe 'conversation', ->
   it 'should demand a sync URL', ->
     err = null
     try
-      innerCon = new Conversation rando()
+      innerCon = new Conversation random.secret()
     catch e
       err = e
     assert err

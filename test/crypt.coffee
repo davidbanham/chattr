@@ -1,17 +1,15 @@
 assert = require 'assert'
 crypto = require 'crypto'
+random = require '../src/rand.coffee'
 
 Crypt = require '../src/crypt.coffee'
 
-rando = ->
-  return Math.floor(Math.random() * (1 << 24)).toString(2)
-
 crypt = null
-key = rando()
+key = random.secret()
 keyhash = crypto.createHash 'sha256'
 keyhash.update key
 keysha = keyhash.digest()
-iv = rando()
+iv = random.secret()
 ivhash = crypto.createHash 'sha256'
 ivhash.update iv
 ivsha = ivhash.digest().slice(0, 16)
