@@ -1,7 +1,7 @@
 EventEmitter = require('events').EventEmitter
 
 searchesDoc =
-  _id: '_design/by_invitee'
+  _id: '_design/conversations'
   views:
     by_invitee:
       map: (
@@ -21,7 +21,7 @@ Registry = (pouch) ->
   @by_name = (name, cb) =>
     @pouch.get name, cb
   @by_invitee = (invitee, cb) =>
-    @pouch.query 'by_invitee', {include_docs: true, key: invitee}, (err, res) ->
+    @pouch.query 'conversations/by_invitee', {include_docs: true, key: invitee}, (err, res) ->
       return cb err if err
       cb null, res.rows.map (row) ->
         return row.doc
