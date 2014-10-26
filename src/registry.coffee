@@ -3,6 +3,12 @@ EventEmitter = require('events').EventEmitter
 searchesDoc =
   _id: '_design/conversations'
   views:
+    all:
+      map: (
+          (doc) ->
+            return if !doc.name
+            emit doc._id
+        ).toString()
     by_invitee:
       map: (
           (doc) ->
@@ -31,6 +37,11 @@ Registry = (pouch) ->
       con._rev = doc._rev
       con._id = doc._id
       @pouch.put con, cb
+  @all_conversations = (cb) =>
+    @pouch.query 'conversations/all', {include_docs: true}, (err, res) ->
+      return cb err if err
+      cb null, res.rows.map (result) ->
+        return result.doc
 
   return this
 

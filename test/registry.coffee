@@ -68,3 +68,22 @@ describe 'registry', ->
             assert.deepEqual err, null
             assert.deepEqual doc.invitees, con.invitees
             done()
+
+  describe 'all_conversations', ->
+    it 'should return all conversations it knows about', (done) ->
+      outerName = con.name
+      reg.register con, (err) ->
+        assert.deepEqual err, null
+        con.name = random.secret()
+        reg.register con, (err) ->
+          assert.deepEqual err, null
+          reg.all_conversations (err, found) ->
+            assert.deepEqual err, null
+            assert.equal found.length, 2
+            names = [outerName, con.name]
+            match = 0
+            for name in names
+              for row in found
+                match++ if name is row.name
+            assert.equal match, names.length
+            done()
