@@ -22,6 +22,8 @@ Registry = (pouch) ->
     auto_compaction: true
   @pouch.put(searchesDoc).then =>
     @emit 'ready'
+  .catch (err) =>
+    @emit 'ready' if err.status is 409
   @register = (con, cb) =>
     @pouch.put con, con.name, cb
   @by_name = (name, cb) =>
