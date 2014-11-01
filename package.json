@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha -R spec --compilers coffee:coffee-script/register"
+    "test": "mocha -R spec --compilers coffee:coffee-script/register",
+    "build": "./node_modules/.bin/browserify -t coffeeify src/index.coffee > bundle.js"
   },
   "repository": {
     "type": "git",
@@ -23,11 +24,14 @@
     "pouchdb": "^3.0.6"
   },
   "devDependencies": {
+    "browserify": "^6.2.0",
     "coffee-script": "^1.8.0",
+    "coffeeify": "^0.7.0",
     "mocha": "^1.21.4",
     "node-forge": "^0.6.14"
   },
   "browser": {
-    "node-forge": "./lib/forge.min.js"
+    "node-forge": "./lib/forge.min.js",
+    "react": "./lib/react.js"
   }
 }
