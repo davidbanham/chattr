@@ -1,6 +1,7 @@
 assert = require 'assert'
 Conversation = require '../src/convo.coffee'
 random = require '../src/rand.coffee'
+fs = require 'fs'
 
 con = null
 
@@ -67,3 +68,14 @@ describe 'conversation', ->
     catch e
       err = e
     assert err
+describe 'conversation', ->
+  beforeEach ->
+    con = new Conversation random.secret(), 'http://example.com'
+    con.on 'error', (err) ->
+      throw err unless err.status is 502
+  it 'should destroy the database', (done) ->
+    con.destroy (err) ->
+      assert.deepEqual err, null
+      assert.throws ->
+        fs.readFileSync "./#{con.name}"
+      done()

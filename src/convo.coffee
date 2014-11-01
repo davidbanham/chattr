@@ -26,6 +26,8 @@ Conversation = (name, syncTarget) ->
         return row.doc
   @changes = @pouch.changes({live: true}).on 'change', =>
     @emit 'message'
+  @destroy = (cb) =>
+    @pouch.destroy cb
   return this
 
 Conversation.prototype = EventEmitter.prototype
