@@ -26,6 +26,10 @@ Registry = (pouch) ->
     @emit 'ready' if err.status is 409
   @register = (con, cb) =>
     @pouch.put con, con.name, cb
+  @remove = (name, cb) =>
+    @pouch.get name, (err, doc) =>
+      return cb err if err
+      @pouch.remove doc, cb
   @by_name = (name, cb) =>
     @pouch.get name, cb
   @by_invitee = (invitee, cb) =>

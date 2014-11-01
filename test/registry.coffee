@@ -33,6 +33,16 @@ describe 'registry', ->
           assert.deepEqual doc.invitees, con.invitees
           done()
 
+  describe 'remove', ->
+    it 'should remove a given conversation', (done) ->
+      reg.register con, (err) ->
+        assert.deepEqual err, null
+        reg.remove con.name, (err) ->
+          assert.deepEqual err, null
+          reg.pouch.get con.name, (err, doc) ->
+            assert.equal err.message, 'deleted'
+            done()
+
   describe 'by_name', ->
     it 'should return conversation info by name', (done) ->
       reg.register con, (err) ->
