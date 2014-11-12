@@ -32,6 +32,7 @@
   },
   "browser": {
     "node-forge": "./lib/forge.min.js",
-    "react": "./lib/react.js"
+    "react": "./lib/react.min.js",
+    "pouchdb": "./lib/pouchdb-3.1.0.min.js"
   }
 }
