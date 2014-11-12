@@ -49,15 +49,21 @@ describe 'conversation', ->
           assert.deepEqual err, null
           assert messages.length > 0
           done()
+  describe 'read', ->
+    beforeEach (done) ->
+      times = [1..30]
+      count = times.length
+      for i in times
+        con.write 'hai'+i, (err) ->
+          done err if err
+          count--
+          done() if count is 0
+
     it 'should return as many documents as you ask for', (done) ->
-      for i in [1..20]
-        con.write 'hai'+i
       con.read 10, (err, messages) ->
         assert.deepEqual err, null
         done assert.equal messages.length, 10
     it 'should return 20 documents by default', (done) ->
-      for i in [1..30]
-        con.write 'hai'+i
       con.read (err, messages) ->
         assert.deepEqual err, null
         done assert.equal messages.length, 20
