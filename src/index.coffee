@@ -23,7 +23,13 @@ ConversationForm = React.createClass
     name = @refs.author.getDOMNode().value.trim()
 
   render: ->
-    return React.DOM.form {onSubmit: @handleSubmit}, elements.Input({name: 'name', value: @parentName}), elements.Input({name: 'sync', value: 'http://example.com'}), elements.Button({action: @newName, text: 'Reset Name'}), elements.Button({text: 'Submit'})
+    return React.DOM.form(
+      {onSubmit: @handleSubmit}
+      elements.Input({name: 'name', value: @parentName})
+      elements.Input({name: 'sync', value: 'http://example.com'})
+      elements.Button({action: @newName, text: 'Reset Name'})
+      elements.Button({text: 'Submit'})
+    )
 
 create_conversation = (opts, cb) ->
   secret = opts.secret or random.secret()
