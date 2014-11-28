@@ -30,15 +30,15 @@ List = React.createClass
     items = []
     for conversation in @props.conversations
       do (conversation) =>
-        items.push elements.Item {name: conversation.name}
-        items.push elements.Button {text: 'X', action: =>
+        items.push elements.Item name: conversation.name
+        items.push elements.Button text: 'X', action: =>
           reg.remove conversation.name, (err) =>
             console.error err if err
             con = new Conversation conversation.name, 'http://localhost'
             con.destroy (err) =>
               console.error err if err
               populate_list()
-        }
+
     return React.DOM.ul null, items
 
 create_conversation = (opts, cb) ->
