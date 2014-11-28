@@ -25,22 +25,6 @@ ConversationForm = React.createClass
   render: ->
     return React.DOM.form {onSubmit: @handleSubmit}, elements.Input({name: 'name', value: @parentName}), elements.Input({name: 'sync', value: 'http://example.com'}), elements.Button({action: @newName, text: 'Reset Name'}), elements.Button({text: 'Submit'})
 
-List = React.createClass
-  render: ->
-    items = []
-    for conversation in @props.conversations
-      do (conversation) =>
-        items.push elements.Item name: conversation.name
-        items.push elements.Button text: 'X', action: =>
-          reg.remove conversation.name, (err) =>
-            console.error err if err
-            con = new Conversation conversation.name, 'http://localhost'
-            con.destroy (err) =>
-              console.error err if err
-              populate_list()
-
-    return React.DOM.ul null, items
-
 create_conversation = (opts, cb) ->
   secret = opts.secret or random.secret()
   name = opts.name or random.name()
@@ -59,6 +43,15 @@ reg.on 'ready', ->
 populate_list = ->
   reg.all_conversations (err, conversations) ->
     return alert err if err
-    React.renderComponent List(conversations: conversations), document.getElementById 'list'
+    model = conversations.map (conversation) ->
+      name: conversation.name
+      action: ->
+        reg.remove conversation.name, (err) =>
+          console.error err if err
+          con = new Conversation conversation.name, 'http://localhost'
+          con.destroy (err) =>
+            console.error err if err
+            populate_list()
+    React.renderComponent elements.List(model: model), document.getElementById 'list'
 
 populate_list()

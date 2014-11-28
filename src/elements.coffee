@@ -27,7 +27,18 @@ Input = React.createClass
       name: @props.name
       onChange: @handleChange
 
+List = React.createClass
+  render: ->
+    items = []
+    for thing in @props.model
+      do (thing) =>
+        items.push Item name: thing.name
+        items.push Button text: 'X', action: thing.action
+
+    return React.DOM.ul null, items
+
 module.exports =
   Input: Input
   Button: Button
   Item: Item
+  List: List
