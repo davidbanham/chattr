@@ -14,7 +14,7 @@ ConversationForm = React.createClass
   displayName: 'ConversationForm'
 
   getInitialState: ->
-    syncUrl: 'http://example.com'
+    sync: 'http://example.com'
     name: random.name()
 
   newName: ->
@@ -22,14 +22,20 @@ ConversationForm = React.createClass
 
   handleSubmit: (e) ->
     e.preventDefault()
-    create_conversation {sync: @state.syncUrl, name: @state.name}, (err) ->
+    create_conversation {sync: @state.sync, name: @state.name}, (err) ->
       dispatcher.emit 'new_conversation'
+
+  changeHandlerFactory: (name) ->
+    return (e) =>
+      newState = {}
+      newState[name] = e.target.value
+      @setState newState
 
   render: ->
     return React.DOM.form(
       {onSubmit: @handleSubmit}
-      elements.Input({name: 'name', value: @state.name})
-      elements.Input({name: 'sync', value: @state.syncUrl})
+      elements.Input({name: 'name', value: @state.name, onChange: @changeHandlerFactory('name')})
+      elements.Input({name: 'sync', value: @state.sync, onChange: @changeHandlerFactory('sync')})
       elements.Button({action: @newName, text: 'Reset Name'})
       elements.Button({text: 'Submit'})
     )

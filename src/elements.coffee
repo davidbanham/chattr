@@ -17,15 +17,12 @@ Button = React.createClass
 Input = React.createClass
   displayName: 'Input'
 
-  handleChange: (e) ->
-    return @props.value = e.target.value
-
   render: ->
     return React.DOM.input
       type: "text"
       value: @props.value
       name: @props.name
-      onChange: @handleChange
+      onChange: @props.onChange
 
 List = React.createClass
   render: ->
