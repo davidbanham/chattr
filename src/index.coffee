@@ -13,23 +13,23 @@ dispatcher = new EventEmitter()
 ConversationForm = React.createClass
   displayName: 'ConversationForm'
 
-  parentName: random.name()
+  getInitialState: ->
+    syncUrl: 'http://example.com'
+    name: random.name()
 
   newName: ->
-    @parentName = random.name()
-    @setProps()
+    @setState({name: random.name()})
 
   handleSubmit: (e) ->
     e.preventDefault()
-    create_conversation {sync: 'http://example.com'}, (err) ->
+    create_conversation {sync: @state.syncUrl, name: @state.name}, (err) ->
       dispatcher.emit 'new_conversation'
-    name = @refs.author.getDOMNode().value.trim()
 
   render: ->
     return React.DOM.form(
       {onSubmit: @handleSubmit}
-      elements.Input({name: 'name', value: @parentName})
-      elements.Input({name: 'sync', value: 'http://example.com'})
+      elements.Input({name: 'name', value: @state.name})
+      elements.Input({name: 'sync', value: @state.syncUrl})
       elements.Button({action: @newName, text: 'Reset Name'})
       elements.Button({text: 'Submit'})
     )
