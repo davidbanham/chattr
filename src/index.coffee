@@ -4,8 +4,11 @@ util = require './util.coffee'
 random = require './rand.coffee'
 elements = require './elements.coffee'
 Registry = require './registry.coffee'
+EventEmitter = require('events').EventEmitter
 
 React = require 'react'
+
+dispatcher = new EventEmitter()
 
 ConversationForm = React.createClass
   displayName: 'ConversationForm'
@@ -19,7 +22,7 @@ ConversationForm = React.createClass
   handleSubmit: (e) ->
     e.preventDefault()
     create_conversation {sync: 'http://example.com'}, (err) ->
-      populate_list()
+      dispatcher.emit 'new_conversation'
     name = @refs.author.getDOMNode().value.trim()
 
   render: ->
@@ -45,6 +48,9 @@ reg = new Registry 'registry'
 
 reg.on 'ready', ->
   React.renderComponent ConversationForm(), document.getElementById 'create_conversation'
+
+dispatcher.on 'new_conversation', ->
+  populate_list()
 
 populate_list = ->
   reg.all_conversations (err, conversations) ->
