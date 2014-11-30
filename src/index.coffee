@@ -72,15 +72,18 @@ populate_conversations = ->
   dispatcher.on event, populate_conversations
 
 dispatcher.on 'conversations_updated', (conversations) ->
-  model = conversations.map (conversation) ->
-    name: conversation.name
-    action: ->
-      reg.remove conversation.name, (err) =>
+  deleter_factory = (name) ->
+    return ->
+      reg.remove name, (err) =>
         console.error err if err
-        con = new Conversation conversation.name, 'http://localhost'
+        con = new Conversation name, 'http://localhost'
         con.destroy (err) =>
           console.error err if err
-          dispatcher.emit 'conversation_deleted'
+          dispatcher.emit 'conversation_deleted', name
+
+  model = conversations.map (conversation) ->
+    name: conversation.name
+    action: deleter_factory conversation.name
   React.renderComponent elements.List(model: model), document.getElementById 'list'
 
 dispatcher.emit 'ready'
