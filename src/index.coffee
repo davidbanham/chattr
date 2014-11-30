@@ -63,21 +63,24 @@ reg = new Registry 'registry'
 reg.on 'ready', ->
   React.renderComponent ConversationForm(), document.getElementById 'create_conversation'
 
-dispatcher.on 'new_conversation', ->
-  populate_list()
-
-populate_list = ->
+populate_conversations = ->
   reg.all_conversations (err, conversations) ->
     return alert err if err
-    model = conversations.map (conversation) ->
-      name: conversation.name
-      action: ->
-        reg.remove conversation.name, (err) =>
-          console.error err if err
-          con = new Conversation conversation.name, 'http://localhost'
-          con.destroy (err) =>
-            console.error err if err
-            populate_list()
-    React.renderComponent elements.List(model: model), document.getElementById 'list'
+    dispatcher.emit 'conversations_updated', conversations
 
-populate_list()
+['new_conversation', 'ready', 'conversation_deleted'].forEach (event) ->
+  dispatcher.on event, populate_conversations
+
+dispatcher.on 'conversations_updated', (conversations) ->
+  model = conversations.map (conversation) ->
+    name: conversation.name
+    action: ->
+      reg.remove conversation.name, (err) =>
+        console.error err if err
+        con = new Conversation conversation.name, 'http://localhost'
+        con.destroy (err) =>
+          console.error err if err
+          dispatcher.emit 'conversation_deleted'
+  React.renderComponent elements.List(model: model), document.getElementById 'list'
+
+dispatcher.emit 'ready'
