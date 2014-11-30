@@ -14,8 +14,11 @@ ConversationForm = React.createClass
   displayName: 'ConversationForm'
 
   getInitialState: ->
-    sync: 'http://example.com'
-    name: random.name()
+    sync: @props.sync or 'http://example.com'
+    name: @props.name or random.name()
+
+  componentWillReceiveProps: (props) ->
+    @setState props
 
   newName: ->
     @setState({name: random.name()})
@@ -26,12 +29,17 @@ ConversationForm = React.createClass
       dispatcher.emit 'new_conversation'
 
   changeHandlerFactory: (name) ->
-    return (e) =>
-      newState = {}
-      newState[name] = e.target.value
-      @setState newState
+    return (e) ->
+      dispatcher.emit "#{name}_change", e.target.value
 
   render: ->
+
+    ['name', 'sync'].forEach (thing) =>
+      dispatcher.on "#{thing}_change", (val) =>
+        changeset = {}
+        changeset[thing] = val
+        @setProps changeSet
+
     return React.DOM.form(
       {onSubmit: @handleSubmit}
       elements.Input({name: 'name', value: @state.name, onChange: @changeHandlerFactory('name')})
