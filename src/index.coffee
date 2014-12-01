@@ -95,6 +95,8 @@ deleter_factory = (name) ->
 representer = (conversation) ->
   name: conversation.name
   action: deleter_factory conversation.name
+  classes:
+    unread: conversation.unread
 
 changer = (changed) ->
   (conversation) ->
