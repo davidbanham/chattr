@@ -10,6 +10,8 @@ React = require 'react'
 
 dispatcher = new EventEmitter()
 
+conversations_model = []
+
 ConversationForm = React.createClass
   displayName: 'ConversationForm'
 
@@ -66,24 +68,41 @@ reg.on 'ready', ->
 populate_conversations = ->
   reg.all_conversations (err, conversations) ->
     return alert err if err
-    dispatcher.emit 'conversations_updated', conversations
+    conversations_model = conversations
+    dispatcher.emit 'update_all_conversations', conversations
 
 ['new_conversation', 'ready', 'conversation_deleted'].forEach (event) ->
   dispatcher.on event, populate_conversations
 
-dispatcher.on 'conversations_updated', (conversations) ->
-  deleter_factory = (name) ->
-    return ->
-      reg.remove name, (err) =>
-        console.error err if err
-        con = new Conversation name, 'http://localhost'
-        con.destroy (err) =>
-          console.error err if err
-          dispatcher.emit 'conversation_deleted', name
+conversation_list = React.renderComponent elements.List(), document.getElementById 'list'
 
-  model = conversations.map (conversation) ->
-    name: conversation.name
-    action: deleter_factory conversation.name
-  React.renderComponent elements.List(model: model), document.getElementById 'list'
+deleter_factory = (name) ->
+  return ->
+    reg.remove name, (err) =>
+      console.error err if err
+      con = new Conversation name, 'http://localhost'
+      con.destroy (err) =>
+        console.error err if err
+        dispatcher.emit 'conversation_deleted', name
+
+representer = (conversation) ->
+  name: conversation.name
+  action: deleter_factory conversation.name
+
+changer = (changed) ->
+  (conversation) ->
+    if changed.name is conversation.name
+      conversation = changed
+    return conversation
+
+unread_incrementer = (target) ->
+  (conversation) ->
+    if target.name is conversation.name
+      conversation.unread ?= 0
+      conversation.unread++
+    return conversation
+
+dispatcher.on 'update_all_conversations', (conversations) ->
+  conversation_list.replaceProps items: conversations.map representer
 
 dispatcher.emit 'ready'

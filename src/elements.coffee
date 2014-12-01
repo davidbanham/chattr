@@ -26,13 +26,11 @@ Input = React.createClass
 
 List = React.createClass
   render: ->
-    items = []
-    for thing in @props.model
-      do (thing) =>
-        items.push Item name: thing.name
-        items.push Button text: 'X', action: thing.action
-
-    return React.DOM.ul null, items
+    return React.DOM.ul null, @props.items?.map (item) ->
+      [
+        Item name: item.name
+        Button text: 'X', action: item.action
+      ]
 
 module.exports =
   Input: Input
