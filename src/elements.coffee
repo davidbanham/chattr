@@ -3,7 +3,7 @@ React = require 'react'
 
 Item = React.createClass
   render: ->
-    return React.DOM.li null, @props.name
+    return React.DOM.li {className: React.addons.classSet @props.classes}, @props.name
 
 Button = React.createClass
   displayName: 'Button'
@@ -28,7 +28,7 @@ List = React.createClass
   render: ->
     return React.DOM.ul null, @props.items?.map (item) ->
       [
-        Item name: item.name
+        Item name: item.name, classes: item.classes
         Button text: 'X', action: item.action
       ]
 
