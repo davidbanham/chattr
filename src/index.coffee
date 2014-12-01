@@ -58,7 +58,7 @@ create_conversation = (opts, cb) ->
   return cb validationErr if validationErr?
 
   con = new Conversation name, opts.sync
-  reg.register {name: name, secret: secret, invitees: opts.invitees}, cb
+  reg.register {name: name, secret: secret, invitees: opts.invitees, syncTarget: opts.sync}, cb
 
 reg = new Registry 'registry'
 
@@ -68,13 +68,20 @@ reg.on 'ready', ->
 populate_conversations = ->
   reg.all_conversations (err, conversations) ->
     return alert err if err
-    conversations_model = conversations
+    conversations_model = conversations.map populater
     dispatcher.emit 'update_all_conversations', conversations
 
 ['new_conversation', 'ready', 'conversation_deleted'].forEach (event) ->
   dispatcher.on event, populate_conversations
 
 conversation_list = React.renderComponent elements.List(), document.getElementById 'list'
+
+populater = (conversation) ->
+  conversation = new Conversation conversation.name, conversation.syncTarget
+  conversation.on 'message', ->
+    conversations_model = conversations_model.map unread_incrementer conversation
+    dispatcher.emit 'update_all_conversations', conversations_model
+  return conversation
 
 deleter_factory = (name) ->
   return ->
