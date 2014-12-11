@@ -29,7 +29,7 @@ List = React.createClass
     return React.DOM.ul null, @props.items?.map (item) ->
       [
         Item name: item.name, classes: item.classes
-        Button text: 'X', action: item.action
+        Button text: 'X', action: item.remove
       ]
 
 module.exports =
