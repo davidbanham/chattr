@@ -59,13 +59,17 @@ ConversationView = React.createClass
     container.message = @props.conversation.crypt.dec container.message
     return container
 
-  componentWillMount: ->
-    @props.conversation.read 10, (err, messages) =>
+  numMessages: 10
+
+  displayMessages: (num) ->
+    @props.conversation.read num or @numMessages, (err, messages) =>
       @setState {messages: messages.map @decrypter}
 
+  componentWillMount: ->
+    @displayMessages()
+
   componentWillReceiveProps: ->
-    @props.conversation.read 10, (err, messages) =>
-      @setState {messages: messages.map @decrypter}
+    @displayMessages()
 
   newMessage: ->
     @props.conversation.write @props.conversation.crypt.enc @state.message
