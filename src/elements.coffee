@@ -3,7 +3,10 @@ React = require 'react'
 
 Item = React.createClass
   render: ->
-    return React.DOM.li {className: React.addons.classSet @props.classes}, @props.name
+    return React.DOM.li
+      className: React.addons.classSet @props.classes
+      onClick: @props.action
+    , @props.name
 
 Button = React.createClass
   displayName: 'Button'
@@ -28,12 +31,17 @@ List = React.createClass
   render: ->
     return React.DOM.ul null, @props.items?.map (item) ->
       [
-        Item name: item.name, classes: item.classes
+        Item name: item.name, classes: item.classes, action: item.action
         Button text: 'X', action: item.remove
       ]
+
+Text = React.createClass
+  render: ->
+    return React.DOM.p {}, @props.text
 
 module.exports =
   Input: Input
   Button: Button
   Item: Item
   List: List
+  Text: Text
