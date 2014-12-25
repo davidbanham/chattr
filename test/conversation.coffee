@@ -27,7 +27,9 @@ describe 'conversation', ->
     it 'should write documents into the database', (done) ->
       con.write 'ohai!', ->
         con.pouch.allDocs (err, res) ->
-          done assert.equal res.total_rows, 1
+          rows = res.rows.filter (row) ->
+            return row unless row.id.match /_design/
+          done assert.equal rows.length, 1
     it 'should write properly formed documents into the database', (done) ->
       d = new Date().toISOString()
       con.write 'hello there', ->
@@ -67,6 +69,27 @@ describe 'conversation', ->
       con.read (err, messages) ->
         assert.deepEqual err, null
         done assert.equal messages.length, 20
+
+  describe 'read', ->
+    beforeEach (done) ->
+      times = [1..30]
+      count = times.length
+      for i in times
+        do (i) ->
+          setTimeout ->
+            con.write 'hai'+i, (err) ->
+              done err if err
+              count--
+              done() if count is 0
+          , (i + 10) * 4
+
+    it 'should return the documents in order', (done) ->
+      con.read (err, messages) ->
+        assert.deepEqual err, null
+        for container, i in messages
+          assert.equal container.message, 'hai'+(i+1)
+        done()
+
   it 'should demand a sync URL', ->
     err = null
     try

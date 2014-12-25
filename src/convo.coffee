@@ -1,11 +1,22 @@
 EventEmitter = require('events').EventEmitter
 
+latestMessagesDoc =
+  _id: '_design/latest'
+  views:
+    all:
+      map: (
+        (doc) ->
+          emit doc.time
+      ).toString()
+
 Conversation = (name, syncTarget) ->
   throw new Error 'syncTarget is required' if !syncTarget
   pouch = if PouchDB? then PouchDB else require 'pouchdb'
   @name = name
   @pouch = new pouch name,
     auto_compaction: true
+  @pouch.put(latestMessagesDoc).then =>
+    @emit 'ready'
   @pouch.sync syncTarget,
     live: true
   .on 'error', (err) =>
@@ -17,7 +28,7 @@ Conversation = (name, syncTarget) ->
     if typeof limit is 'function'
       cb = limit
       limit = 20
-    @pouch.allDocs
+    @pouch.query 'latest/all',
       include_docs: true
       limit: limit
     , (err, res) ->
