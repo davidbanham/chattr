@@ -63,7 +63,7 @@ ConversationView = React.createClass
     @props.conversation.read 10, (err, messages) =>
       @setState {messages: messages.map @decrypter}
 
-  componentWillUpdate: ->
+  componentWillReceiveProps: ->
     @props.conversation.read 10, (err, messages) =>
       @setState {messages: messages.map @decrypter}
 
