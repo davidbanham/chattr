@@ -86,8 +86,10 @@ describe 'conversation', ->
     it 'should return the documents in order', (done) ->
       con.read (err, messages) ->
         assert.deepEqual err, null
+        target = 30
         for container, i in messages
-          assert.equal container.message, 'hai'+(i+1)
+          assert.equal container.message, 'hai'+target
+          target--
         done()
 
   it 'should demand a sync URL', ->

@@ -31,6 +31,7 @@ Conversation = (name, syncTarget) ->
     @pouch.query 'latest/all',
       include_docs: true
       limit: limit
+      descending: true
     , (err, res) ->
       return cb err if err
       return cb null, res.rows.map (row) ->
