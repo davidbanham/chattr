@@ -12,15 +12,18 @@ dispatcher = new EventEmitter()
 
 conversations_model = []
 
+changeHandlerFactory = (name) ->
+  return (e) =>
+    changeset = {}
+    changeset[name] = e.target.value
+    @setState changeset
+
 ConversationForm = React.createClass
   displayName: 'ConversationForm'
 
   getInitialState: ->
     sync: @props.sync or 'http://example.com'
     name: @props.name or random.name()
-
-  componentWillReceiveProps: (props) ->
-    @setState props
 
   newName: ->
     @setState({name: random.name()})
@@ -30,22 +33,13 @@ ConversationForm = React.createClass
     create_conversation {sync: @state.sync, name: @state.name}, (err) ->
       dispatcher.emit 'new_conversation'
 
-  changeHandlerFactory: (name) ->
-    return (e) ->
-      dispatcher.emit "#{name}_change", e.target.value
 
   render: ->
 
-    ['name', 'sync'].forEach (thing) =>
-      dispatcher.on "#{thing}_change", (val) =>
-        changeset = {}
-        changeset[thing] = val
-        @setProps changeSet
-
     return React.DOM.form(
       {onSubmit: @handleSubmit}
-      elements.Input({name: 'name', value: @state.name, onChange: @changeHandlerFactory('name')})
-      elements.Input({name: 'sync', value: @state.sync, onChange: @changeHandlerFactory('sync')})
+      elements.Input({name: 'name', value: @state.name, onChange: changeHandlerFactory.call(this, 'name')})
+      elements.Input({name: 'sync', value: @state.sync, onChange: changeHandlerFactory.call(this, 'sync')})
       elements.Button({action: @newName, text: 'Reset Name'})
       elements.Button({text: 'Submit'})
     )
