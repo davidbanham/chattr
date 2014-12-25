@@ -71,16 +71,32 @@ ConversationView = React.createClass
   componentWillReceiveProps: ->
     @displayMessages()
 
-  newMessage: ->
-    @props.conversation.write @props.conversation.crypt.enc @state.message
+  newMessage: (message) ->
+    @props.conversation.write @props.conversation.crypt.enc message
 
   render: ->
     return React.DOM.span(
       null
-      elements.Input({name: 'message', value: @state.message, onChange: changeHandlerFactory.call(this, 'message')})
-      elements.Button({action: @newMessage, text: 'Send'})
+      MessageSender handleSubmit: @newMessage
       @state.messages.map (container) ->
         elements.Text({text: container.message})
+    )
+
+MessageSender = React.createClass
+  displayName: 'MessageSender'
+
+  getInitialState: ->
+    message: ''
+
+  handleSubmit: (e) ->
+    e.preventDefault()
+    @props.handleSubmit @state.message
+
+  render: ->
+    return React.DOM.form(
+      {onSubmit: @handleSubmit}
+      elements.Input({name: 'message', value: @state.message, onChange: changeHandlerFactory.call(this, 'message')})
+      elements.Button({text: 'Send'})
     )
 
 create_conversation = (opts, cb) ->
