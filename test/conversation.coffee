@@ -42,6 +42,18 @@ describe 'conversation', ->
       con.on 'message', ->
         done()
       con.write 'hai'
+    it 'should emit a local_write event when a doc is written', (done) ->
+      con.on 'local_write', ->
+        done()
+      con.write 'there'
+    it 'should emit local_write before message when a doc is written', (done) ->
+      okay = false
+      con.on 'local_write', ->
+        okay = true
+        done()
+      con.on 'message', ->
+        throw new Error('message emitted before local_write') unless okay
+      con.write 'racy'
   describe 'read', ->
     it 'should have a read method', ->
       assert con.read

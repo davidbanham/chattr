@@ -23,6 +23,7 @@ Conversation = (name, syncTarget) ->
     @emit 'error', err
   .catch -> #Discard bluebird errors, we get it in the line above
   @write = (msg, cb) =>
+    @emit 'local_write'
     @pouch.post {time: new Date().toISOString(), message: msg}, cb
   @read = (limit, cb) =>
     if typeof limit is 'function'
