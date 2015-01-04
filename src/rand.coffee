@@ -1,6 +1,6 @@
 adjectives = require '../lib/adjectives.json'
 animals = require '../lib/animals.json'
-chars = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'
+chars = ' !"#$%&\'()*+,-.0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz{|}~'
 
 rand_char = ->
   return chars.charAt Math.floor Math.random() * chars.length
