@@ -13,10 +13,11 @@ rand_string = (len) ->
 
   return s
 
+array_member = (arr) ->
+  return arr[Math.floor(Math.random() * arr.length)]
+
 module.exports =
   secret: ->
     return rand_string 23
-  array_member: (arr) ->
-    return arr[Math.floor(Math.random() * arr.length)]
   name: ->
-    return "#{@array_member adjectives} #{@array_member animals}"
+    return "#{array_member adjectives} #{array_member animals}"
