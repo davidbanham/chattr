@@ -117,6 +117,7 @@ reg.on 'ready', ->
 
 populate_conversations = ->
   reg.all_conversations (err, conversations) ->
+    return if err?.status = 404
     return alert err if err
     conversations_model = conversations.map populater
     dispatcher.emit 'update_all_conversations', conversations_model
