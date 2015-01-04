@@ -5,6 +5,7 @@ random = require './rand.coffee'
 elements = require './elements.coffee'
 Registry = require './registry.coffee'
 EventEmitter = require('events').EventEmitter
+notifier = require './browser_notifications.coffee'
 
 React = require 'react'
 
@@ -133,6 +134,10 @@ populater = (conv) ->
   conversation.on 'message', ->
     conversations_model = conversations_model.map unread_incrementer conversation
     dispatcher.emit 'update_all_conversations', conversations_model
+  conversation.on 'message', ->
+    notifier.say conversation.name
+  conversation.on 'local_write', ->
+    notifier.skip conversation.name
   return conversation
 
 deleter_factory = (name) ->
