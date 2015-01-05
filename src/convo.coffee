@@ -17,10 +17,18 @@ Conversation = (name, syncTarget) ->
     auto_compaction: true
   @pouch.put(latestMessagesDoc).then =>
     @emit 'ready'
-  @pouch.sync syncTarget,
+  @pouch.replicate.to syncTarget,
     live: true
   .on 'error', (err) =>
     @emit 'error', err
+  .catch -> #Discard bluebird errors, we get it in the line above
+  @pouch.replicate.from syncTarget,
+    live: true
+  .on 'error', (err) =>
+    @emit 'error', err
+  .on 'change', (change) =>
+    return unless change.docs_written
+    @emit 'remote_message', change
   .catch -> #Discard bluebird errors, we get it in the line above
   @write = (msg, cb) =>
     @emit 'local_write'

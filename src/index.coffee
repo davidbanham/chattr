@@ -134,10 +134,8 @@ populater = (conv) ->
   conversation.on 'message', ->
     conversations_model = conversations_model.map unread_incrementer conversation
     dispatcher.emit 'update_all_conversations', conversations_model
-  conversation.on 'message', ->
+  conversation.on 'remote_message', (change) ->
     notifier.say conversation.name
-  conversation.on 'local_write', ->
-    notifier.skip conversation.name
   return conversation
 
 deleter_factory = (name) ->
