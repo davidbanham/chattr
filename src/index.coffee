@@ -91,6 +91,7 @@ MessageSender = React.createClass
 
   handleSubmit: (e) ->
     e.preventDefault()
+    @setState {message: ''}
     @props.handleSubmit @state.message
 
   render: ->
