@@ -41,7 +41,6 @@ ConversationForm = React.createClass
     create_conversation {author_name: @state.author_name, sync: @state.sync, name: @state.name, secret: @state.secret, iv: @state.iv}, (err) ->
       dispatcher.emit 'new_conversation'
 
-
   render: ->
 
     return React.DOM.form(
