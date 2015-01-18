@@ -4,7 +4,7 @@ util = require './util.coffee'
 random = require './rand.coffee'
 elements = require './elements.coffee'
 Registry = require './registry.coffee'
-parser = require './parser.coffee'
+codec = require './codec.coffee'
 EventEmitter = require('events').EventEmitter
 notifier = require './browser_notifications.coffee'
 
@@ -65,7 +65,7 @@ ConversationView = React.createClass
     return container
 
   parser: (container) ->
-    container.parsed = parser.parse container.deciphered
+    container.parsed = codec.dec container.deciphered
     return container
 
   numMessages: 10
@@ -84,7 +84,7 @@ ConversationView = React.createClass
     payload =
       text: text
       author: @props.conversation.author_name
-    @props.conversation.write @props.conversation.crypt.enc JSON.stringify payload
+    @props.conversation.write @props.conversation.crypt.enc codec.co payload
   render: ->
     return React.DOM.span(
       null
