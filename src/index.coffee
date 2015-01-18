@@ -14,6 +14,8 @@ dispatcher = new EventEmitter()
 conversations_model = []
 active_conversation = null
 
+localStorage.author_name = prompt('Please enter a username') if !localStorage.author_name
+
 changeHandlerFactory = (name) ->
   return (e) =>
     changeset = {}
@@ -28,13 +30,14 @@ ConversationForm = React.createClass
     name: @props.name or random.name()
     secret: @props.secret or random.secret()
     iv: @props.iv or random.secret()
+    author_name: @props.author_name or ''
 
   newName: ->
     @setState({name: random.name()})
 
   handleSubmit: (e) ->
     e.preventDefault()
-    create_conversation {sync: @state.sync, name: @state.name, secret: @state.secret, iv: @state.iv}, (err) ->
+    create_conversation {author_name: @state.author_name, sync: @state.sync, name: @state.name, secret: @state.secret, iv: @state.iv}, (err) ->
       dispatcher.emit 'new_conversation'
 
 
@@ -46,6 +49,7 @@ ConversationForm = React.createClass
       elements.Input({name: 'sync', value: @state.sync, onChange: changeHandlerFactory.call(this, 'sync')})
       elements.Input({name: 'secret', value: @state.secret, onChange: changeHandlerFactory.call(this, 'secret')})
       elements.Input({name: 'iv', value: @state.iv, onChange: changeHandlerFactory.call(this, 'iv')})
+      elements.Input({name: 'author_name', value: @state.author_name, onChange: changeHandlerFactory.call(this, 'author_name')})
       elements.Button({action: @newName, text: 'Reset Name'})
       elements.Button({text: 'Submit'})
     )
@@ -110,12 +114,12 @@ create_conversation = (opts, cb) ->
   return cb validationErr if validationErr?
 
   con = new Conversation name, opts.sync
-  reg.register {name: name, secret: secret, iv: iv, invitees: opts.invitees, syncTarget: opts.sync}, cb
+  reg.register {author_name: opts.author_name, name: name, secret: secret, iv: iv, invitees: opts.invitees, syncTarget: opts.sync}, cb
 
 reg = new Registry 'registry'
 
 reg.on 'ready', ->
-  React.renderComponent ConversationForm(), document.getElementById 'create_conversation'
+  React.renderComponent ConversationForm(author_name: localStorage.author_name), document.getElementById 'create_conversation'
 
 populate_conversations = ->
   reg.all_conversations (err, conversations) ->
@@ -131,6 +135,7 @@ conversation_list = React.renderComponent elements.List(), document.getElementBy
 
 populater = (conv) ->
   conversation = new Conversation conv.name, conv.syncTarget
+  conversation.author_name = conv.author_name
   conversation.crypt = new Crypt conv.secret, conv.iv
   conversation.on 'message', ->
     conversations_model = conversations_model.map unread_incrementer conversation
