@@ -4,6 +4,7 @@ util = require './util.coffee'
 random = require './rand.coffee'
 elements = require './elements.coffee'
 Registry = require './registry.coffee'
+parser = require './parser.coffee'
 EventEmitter = require('events').EventEmitter
 notifier = require './browser_notifications.coffee'
 
@@ -64,11 +65,15 @@ ConversationView = React.createClass
     container.message = @props.conversation.crypt.dec container.message
     return container
 
+  parser: (container) ->
+    container.message = parser.parse container.message
+    return container
+
   numMessages: 10
 
   displayMessages: (num) ->
     @props.conversation.read num or @numMessages, (err, messages) =>
-      @setState {messages: messages.map @decrypter}
+      @setState {messages: messages.map(@decrypter).map(@parser)}
 
   componentWillMount: ->
     @displayMessages()
@@ -77,14 +82,25 @@ ConversationView = React.createClass
     @displayMessages()
 
   newMessage: (message) ->
-    @props.conversation.write @props.conversation.crypt.enc message
-
+    payload =
+      text: message
+      author: @props.conversation.author_name
+    @props.conversation.write @props.conversation.crypt.enc JSON.stringify payload
   render: ->
     return React.DOM.span(
       null
       MessageSender handleSubmit: @newMessage
       @state.messages.map (container) ->
-        elements.Text({text: container.message})
+        MessageView container
+    )
+
+MessageView = React.createClass
+  displayName: 'MessageView'
+  render: ->
+    return React.DOM.span(
+      null
+      elements.Text {text: @props.message.author}
+      elements.Text {text: @props.message.text}
     )
 
 MessageSender = React.createClass
