@@ -62,11 +62,11 @@ ConversationView = React.createClass
     messages: []
 
   decrypter: (container) ->
-    container.message = @props.conversation.crypt.dec container.message
+    container.deciphered = @props.conversation.crypt.dec container.message
     return container
 
   parser: (container) ->
-    container.message = parser.parse container.message
+    container.parsed = parser.parse container.deciphered
     return container
 
   numMessages: 10
@@ -81,9 +81,9 @@ ConversationView = React.createClass
   componentWillReceiveProps: ->
     @displayMessages()
 
-  newMessage: (message) ->
+  newMessage: (text) ->
     payload =
-      text: message
+      text: text
       author: @props.conversation.author_name
     @props.conversation.write @props.conversation.crypt.enc JSON.stringify payload
   render: ->
@@ -99,25 +99,25 @@ MessageView = React.createClass
   render: ->
     return React.DOM.span(
       null
-      elements.Text {text: @props.message.author}
-      elements.Text {text: @props.message.text}
+      elements.Text {text: @props.parsed.author}
+      elements.Text {text: @props.parsed.text}
     )
 
 MessageSender = React.createClass
   displayName: 'MessageSender'
 
   getInitialState: ->
-    message: ''
+    text: ''
 
   handleSubmit: (e) ->
     e.preventDefault()
-    @setState {message: ''}
-    @props.handleSubmit @state.message
+    @setState {text: ''}
+    @props.handleSubmit @state.text
 
   render: ->
     return React.DOM.form(
       {onSubmit: @handleSubmit}
-      elements.Input({name: 'message', value: @state.message, onChange: changeHandlerFactory.call(this, 'message')})
+      elements.Input({name: 'text', value: @state.text, onChange: changeHandlerFactory.call(this, 'text')})
       elements.Button({text: 'Send'})
     )
 
