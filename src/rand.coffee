@@ -1,6 +1,5 @@
-adjectives = require '../lib/adjectives.json'
-animals = require '../lib/animals.json'
 chars = ' !"#$%&\'()*+,-.0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz{|}~'
+bandname = require 'bandname'
 
 rand_char = ->
   return chars.charAt Math.floor Math.random() * chars.length
@@ -13,11 +12,7 @@ rand_string = (len) ->
 
   return s
 
-array_member = (arr) ->
-  return arr[Math.floor(Math.random() * arr.length)]
-
 module.exports =
   secret: ->
     return rand_string 23
-  name: ->
-    return "#{array_member adjectives} #{array_member animals}"
+  name: bandname
