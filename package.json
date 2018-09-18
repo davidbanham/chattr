@@ -22,7 +22,7 @@
   "homepage": "https://github.com/davidbanham/chattr",
   "dependencies": {
     "bandname": "^1.0.0",
-    "pouchdb": "^3.1.0"
+    "pouchdb": "^6.0.0"
   },
   "devDependencies": {
     "browserify": "^6.2.0",
